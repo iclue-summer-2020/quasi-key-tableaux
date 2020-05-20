@@ -1,17 +1,17 @@
 {
   "files": {
-    "main.css": "/static/css/main.e1be1cae.chunk.css",
-    "main.js": "/static/js/main.99411307.chunk.js",
-    "main.js.map": "/static/js/main.99411307.chunk.js.map",
-    "runtime-main.js": "/static/js/runtime-main.7159d709.js",
-    "runtime-main.js.map": "/static/js/runtime-main.7159d709.js.map",
-    "static/css/2.82dca9e4.chunk.css": "/static/css/2.82dca9e4.chunk.css",
-    "static/js/2.ec462e66.chunk.js": "/static/js/2.ec462e66.chunk.js",
-    "static/js/2.ec462e66.chunk.js.map": "/static/js/2.ec462e66.chunk.js.map",
-    "index.html": "/index.html",
-    "precache-manifest.96f8b39fe4144a170de7c2df2bdfc0db.js": "/precache-manifest.96f8b39fe4144a170de7c2df2bdfc0db.js",
-    "service-worker.js": "/service-worker.js",
-    "static/css/2.82dca9e4.chunk.css.map": "/static/css/2.82dca9e4.chunk.css.map",
-    "static/css/main.e1be1cae.chunk.css.map": "/static/css/main.e1be1cae.chunk.css.map"
+    "main.css": "/quasi-key-tableaux/static/css/main.e1be1cae.chunk.css",
+    "main.js": "/quasi-key-tableaux/static/js/main.ab2a5c4d.chunk.js",
+    "main.js.map": "/quasi-key-tableaux/static/js/main.ab2a5c4d.chunk.js.map",
+    "runtime-main.js": "/quasi-key-tableaux/static/js/runtime-main.d02716bf.js",
+    "runtime-main.js.map": "/quasi-key-tableaux/static/js/runtime-main.d02716bf.js.map",
+    "static/css/2.82dca9e4.chunk.css": "/quasi-key-tableaux/static/css/2.82dca9e4.chunk.css",
+    "static/js/2.73e95b3b.chunk.js": "/quasi-key-tableaux/static/js/2.73e95b3b.chunk.js",
+    "static/js/2.73e95b3b.chunk.js.map": "/quasi-key-tableaux/static/js/2.73e95b3b.chunk.js.map",
+    "index.html": "/quasi-key-tableaux/index.html",
+    "precache-manifest.553a1f9d35d47b9b0b0429f6c796cfc7.js": "/quasi-key-tableaux/precache-manifest.553a1f9d35d47b9b0b0429f6c796cfc7.js",
+    "service-worker.js": "/quasi-key-tableaux/service-worker.js",
+    "static/css/2.82dca9e4.chunk.css.map": "/quasi-key-tableaux/static/css/2.82dca9e4.chunk.css.map",
+    "static/css/main.e1be1cae.chunk.css.map": "/quasi-key-tableaux/static/css/main.e1be1cae.chunk.css.map"
   }
 }
