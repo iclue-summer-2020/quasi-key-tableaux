@@ -1,9 +1,9 @@
 import React from 'react';
 import rp from 'request-promise';
 import {
-  H3, ProgressBar, Dialog, InputGroup, Classes, Button, Colors, Intent, FormGroup, Tooltip, Icon, H5,
+  ProgressBar, InputGroup, Button, Intent, FormGroup, Tooltip, H5,
 } from '@blueprintjs/core';
-import { withStyles, makeStyles, createStyles } from '@material-ui/styles';
+import { withStyles, createStyles } from '@material-ui/styles';
 import { Theme, WithStyles, Paper, Grid, Typography } from '@material-ui/core';
 import blue from '@material-ui/core/colors/blue';
 
@@ -121,7 +121,7 @@ class QKTView extends React.Component<Props, State> {
     const alpha = arr
       .filter(x => x !== '')
       .map(x => Number.parseInt(x));
-    if (alpha.length == 0) return notValid;
+    if (alpha.length === 0) return notValid;
     if (alpha.some(x => x < 0)) return notValid;
 
     return { valid: true, alpha };

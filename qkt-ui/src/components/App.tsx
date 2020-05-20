@@ -1,5 +1,4 @@
 import React from 'react';
-import { Classes } from '@blueprintjs/core';
 
 import '@blueprintjs/core/lib/css/blueprint.css';
 
