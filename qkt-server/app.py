@@ -1,4 +1,7 @@
 #!/usr/bin/env python3.6
+import argparse
+import sys
+
 from flask import Flask, jsonify, request
 from flask_cors import CORS
 from QK import QKTableaux, consoleFn
@@ -28,5 +31,14 @@ def hello():
   }
   return jsonify(report)
 
+
+def main(args):
+  app.run(debug=args.debug, port=args.port)
+
+
 if __name__ == '__main__':
-  app.run(debug=True)
+  parser = argparse.ArgumentParser()
+  parser.add_argument('--debug', action='store_true')
+  parser.add_argument('--port', type=int, default=5000)
+  args = parser.parse_args()
+  sys.exit(main(args))
