@@ -12,7 +12,10 @@ import 'styles/QKTView.css';
 
 
 const { REACT_APP_QKT_HOST = 'localhost', REACT_APP_QKT_PORT = 5000 } = process.env;
-const ENDPOINT = `http://${REACT_APP_QKT_HOST}:${REACT_APP_QKT_PORT}`;
+
+const inDev = !process.env.NODE_ENV || process.env.NODE_ENV === 'development';
+const CORS = `https://cors-anywhere.herokuapp.com/`;
+const ENDPOINT = `${inDev ? '' : CORS}http://${REACT_APP_QKT_HOST}:${REACT_APP_QKT_PORT}`;
 const TILE_COLOR = blue[200];
 
 const styles = (theme: Theme) => createStyles({
@@ -130,6 +133,9 @@ class QKTView extends React.Component<Props, State> {
   sendRequest = async (alpha: number[]) => {
     const options: rp.OptionsWithUrl = {
       url: `${ENDPOINT}/solve`,
+      headers: {
+        origin: window.location.origin,
+      },
       useQuerystring: true,
       qs: {
         'alpha[]': alpha,

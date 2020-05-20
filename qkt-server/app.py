@@ -33,7 +33,11 @@ def hello():
 
 
 def main(args):
-  app.run(debug=args.debug, host='0.0.0.0', port=args.port)
+  app.run(
+    debug=args.debug,
+    host='0.0.0.0',
+    port=args.port,
+  )
 
 
 if __name__ == '__main__':
