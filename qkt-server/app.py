@@ -39,6 +39,6 @@ def main(args):
 if __name__ == '__main__':
   parser = argparse.ArgumentParser()
   parser.add_argument('--debug', action='store_true')
-  parser.add_argument('--port', type=int, default=5000)
+  parser.add_argument('--port', type=int, default=80)
   args = parser.parse_args()
   sys.exit(main(args))
