@@ -6,9 +6,6 @@ import QKTView from 'components/QKTView';
 
 dotenv.config();
 
-const { REACT_APP_QKT_HOST = 'localhost', REACT_APP_QKT_PORT = 9000 } = process.env;
-
-
 const QKTMainPage = () => (
   <QKTView />
 );

@@ -1,14 +1,19 @@
 import React from 'react';
+import rp from 'request-promise';
 import {
-  H3, ProgressBar, Dialog, InputGroup, Classes, Button, Colors, Intent, FormGroup, Tooltip, Icon,
+  H3, ProgressBar, Dialog, InputGroup, Classes, Button, Colors, Intent, FormGroup, Tooltip, Icon, H5,
 } from '@blueprintjs/core';
-import { SPACE } from '@blueprintjs/core/lib/esm/common/keys';
-
-import Message, { TIMEOUT } from 'utils/Message';
-
-import 'styles/QKTView.css';
 import { withStyles, makeStyles, createStyles } from '@material-ui/styles';
 import { Theme, WithStyles, Paper, Grid, Typography } from '@material-ui/core';
+import blue from '@material-ui/core/colors/blue';
+
+import Message, { TIMEOUT } from 'utils/Message';
+import 'styles/QKTView.css';
+
+
+const { REACT_APP_QKT_HOST = 'localhost', REACT_APP_QKT_PORT = 5000 } = process.env;
+const ENDPOINT = `http://${REACT_APP_QKT_HOST}:${REACT_APP_QKT_PORT}`;
+const TILE_COLOR = blue[500];
 
 const styles = (theme: Theme) => createStyles({
   root: {
@@ -39,7 +44,10 @@ interface State {
   stage: Stage;
   alpha: number[] | null;
   T: number[][] | null;
-  validAlphaText: boolean | null;
+  status: string | null;
+  numSolutions: number | null;
+  validAlphaText: boolean;
+  alphaText: string;
 }
 
 /**
@@ -56,29 +64,22 @@ class QKTView extends React.Component<Props, State> {
     this.state = {
       stage: Stage.Finished,
       alpha: null,
+      status: null,
+      numSolutions: null,
       T: null,
-      validAlphaText: null,
+      validAlphaText: false,
+      alphaText: '',
     };
   }
 
-  componentDidMount = () => {
+  componentDidMount = () => { };
 
-  };
-
-  componentWillUnmount = () => {
-
-  };
+  componentWillUnmount = () => { };
 
   doneSolving = () => {
     this.setState({
       stage: Stage.Finished,
     });
-  };
-
-  onNameChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-  };
-
-  onSubmit = (event: any) => {
   };
 
   buildGrid = (grid: number[][]) => {
@@ -91,7 +92,7 @@ class QKTView extends React.Component<Props, State> {
             <Grid item key={`${r}.${c}`}>
               <Paper
                 className={classes.paper}
-                style={{ backgroundColor: 'gray' }}>
+                style={{ backgroundColor: TILE_COLOR }}>
                   <Typography>
                     {value}
                   </Typography>
@@ -102,6 +103,7 @@ class QKTView extends React.Component<Props, State> {
       </Grid>
     );
   };
+
 
   /**
    * The alpha text is valid if it:
@@ -116,11 +118,59 @@ class QKTView extends React.Component<Props, State> {
     const arr = text.split(/[ \t,]+/);
     if (!arr.every(x => Number.isInteger(+x))) return notValid;
 
-    const alpha = arr.map(Number.parseInt);
+    const alpha = arr
+      .filter(x => x !== '')
+      .map(x => Number.parseInt(x));
     if (alpha.length == 0) return notValid;
     if (alpha.some(x => x < 0)) return notValid;
 
     return { valid: true, alpha };
+  };
+
+  sendRequest = async (alpha: number[]) => {
+    const options: rp.OptionsWithUrl = {
+      url: `${ENDPOINT}/solve`,
+      useQuerystring: true,
+      qs: {
+        'alpha[]': alpha,
+      },
+      json: true,
+    };
+
+    let response = null;
+    try {
+      response = await rp(options);
+    } catch (e) {
+      Message.show({
+        timeout: TIMEOUT,
+        message: `Unable to solve: ${e}`,
+        icon: 'warning-sign',
+        intent: Intent.DANGER,
+      });
+      return this.setState({ stage: Stage.Finished });
+    }
+
+    Message.show({
+      timeout: TIMEOUT,
+      message: 'Successfully solved',
+      icon: 'tick',
+      intent: Intent.SUCCESS,
+    });
+    return this.setState({
+      stage: Stage.Finished,
+      numSolutions: response['num_solutions'],
+      status: response['status'],
+      T: response['sample_solution'],
+      alpha,
+    });
+  };
+
+  onSubmit = () => {
+    const { alphaText } = this.state;
+    const { valid, alpha } = this.validateAlphaText(alphaText);
+    if (!valid) return;
+
+    this.setState({ stage: Stage.Solving }, () => this.sendRequest(alpha!));
   };
 
   /**
@@ -132,21 +182,22 @@ class QKTView extends React.Component<Props, State> {
 
     this.setState({
       validAlphaText: valid,
+      alphaText: value,
     });
   };
 
   render = () => {
-    const { stage, T, alpha, validAlphaText } = this.state;
+    const { stage, T, alpha, validAlphaText, status, numSolutions } = this.state;
 
     const submitButton = (
       <Tooltip content='Find quasi-key tableaux'>
-          <Button
-            minimal
-            icon='arrow-right'
-            intent={Intent.PRIMARY}
-            disabled={!validAlphaText}
-            onClick={this.onSubmit}
-          />
+        <Button
+          minimal
+          icon='arrow-right'
+          intent={Intent.PRIMARY}
+          disabled={!validAlphaText}
+          onClick={this.onSubmit}
+        />
       </Tooltip>
     );
 
@@ -166,7 +217,13 @@ class QKTView extends React.Component<Props, State> {
             rightElement={submitButton}
           />
         </FormGroup>
-        {this.buildGrid(T || [[1, 1, 1], [2, 2, 2, 2]])}
+        {T && this.buildGrid(T.slice().reverse())}
+        {alpha &&
+          <div>
+            <H5>Status: {status}</H5>
+            <H5>Number of solutions: {numSolutions}</H5>
+          </div>
+        }
         {stage === Stage.Solving &&
           <ProgressBar
             className='sb-footer'

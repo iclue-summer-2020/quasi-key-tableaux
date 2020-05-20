@@ -25,11 +25,16 @@ class SolutionReporter(cp_model.CpSolverSolutionCallback):
     self.vars = [v for vv in T for v in vv] + additional_constraints
     self.callbackFn = callbackFn
     self.num_solutions = 0
+    self.sample_solution = None
 
   def on_solution_callback(self):
     '''Called when a solution is found.'''
     self.num_solutions += 1
     TT = [[self.Value(v) for v in vv] for vv in self.T]
+    if self.num_solutions == 1 \
+    or np.random.rand() < 1/self.num_solutions:
+      self.sample_solution = TT
+
     self.callbackFn(self.alpha, TT)
 
 
@@ -154,7 +159,8 @@ class QKTableaux:
     status_value = solver.SearchForAllSolutions(self.model, sol_reporter)
     status = cp_model_pb2.CpSolverStatus.Name(status_value)
     num_solutions =  sol_reporter.num_solutions
-    return (status, num_solutions)
+    sample_solution = sol_reporter.sample_solution
+    return (status, num_solutions, sample_solution)
 
 
 if __name__ == '__main__':
