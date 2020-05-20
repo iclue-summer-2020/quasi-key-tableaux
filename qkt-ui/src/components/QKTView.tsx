@@ -13,7 +13,7 @@ import 'styles/QKTView.css';
 
 const { REACT_APP_QKT_HOST = 'localhost', REACT_APP_QKT_PORT = 5000 } = process.env;
 const ENDPOINT = `http://${REACT_APP_QKT_HOST}:${REACT_APP_QKT_PORT}`;
-const TILE_COLOR = blue[500];
+const TILE_COLOR = blue[200];
 
 const styles = (theme: Theme) => createStyles({
   root: {
@@ -210,7 +210,7 @@ class QKTView extends React.Component<Props, State> {
           labelInfo='(weak)'
         >
           <InputGroup
-            placeholder='1, 2, 3, 4'
+            placeholder={'\u03b1'}
             onChange={this.onChange}
             intent={validAlphaText ? Intent.SUCCESS : Intent.DANGER}
             leftIcon='dot'
