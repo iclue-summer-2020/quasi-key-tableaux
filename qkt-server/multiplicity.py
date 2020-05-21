@@ -119,13 +119,17 @@ def main(args):
       print(f'anomally: {alpha}')
 
     # Next, we check if the converse is true.
-    if mf and not avoidsAll(alpha, KM):
-      print(f'counterexample: {alpha}')
+    # We are only interested in multiplicity-free compositions.
+    if not mf: continue
+    contained_pats = [
+      pattern
+      for pattern in KM
+      if not avoids(alpha, pattern)
+    ]
+    if contained_pats:
+      print(f'counterexample: {alpha}; contains patterns: {contained_pats}.')
 
 if __name__ == '__main__':
-  # multiplicities((10, 5, 12, 9, 8, 8, 4, 2, 5, 1, 3))
-  # multiplicities(np.array([0, 1, 3, 0]))
-
   parser = argparse.ArgumentParser()
   parser.add_argument('-k', type=int, required=True)
   parser.add_argument('-w', '--max-width', type=int, default=None)
