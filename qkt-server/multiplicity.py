@@ -11,17 +11,17 @@ def compositions(k, max_width):
   '''
   Generates every weak composition a = (a_1,...,a_l) where:
     - l <= max_width,
-    - sum of a_i's is exactly k.
+    - sum of a_i's is exactly k,
+    - a_i > 0.
   '''
   c = [0] * max_width
   def comp(k, w):
     if k == 0: yield tuple(c[:w])
-    if w == max_width:
+    if w == max_width or k < 0:
       yield from ()
       return
 
-    # TODO(ljeabmreosn): should these compositions include 0?
-    for j in range(k+1):
+    for j in range(1, k+1):
       old, c[w] = c[w], j
       yield from comp(k-j, w+1)
       c[w] = old
@@ -40,6 +40,15 @@ def wt(T):
   B[0] = 0
   return B
 
+def cc(a, b):
+  '''Helper method for the `contains` function.'''
+  m = len(b)
+  for s in range(m):
+    for t in range(m):
+      if (a[s] <= a[t]) != (b[s] <= b[t]): return False
+      if abs(a[s]-a[t]) < abs(b[s]-b[t]): return False
+  return True
+
 def contains(alpha, b):
   '''
   Returns True if alpha contains the composition pattern b.
@@ -48,11 +57,8 @@ def contains(alpha, b):
   m = len(b)
   for indices in itertools.combinations(range(n), m):
     a = alpha[np.array(indices)]
-    for s in range(m):
-      for t in range(m):
-        if (a[s] <= a[t]) != (b[s] <= b[t]): return False
-        if abs(a[s]-a[t]) < abs(b[s]-b[t]): return False
-  return True
+    if cc(a, b): return True
+  return False
 
 def avoids(alpha, b):
   return not contains(alpha, b)
@@ -108,13 +114,13 @@ def main(args):
     alpha = np.array(a)
     mf = multFree(alpha)
 
-    # If the logic is correct, this statement should never be true.
-    # ... but it sometimes is, so I must be misunderstanding Definition 1.3.
-    # I noticed that when a weak composition a = (a_1,...,a_n) satisfies:
-    #                 a_i > 0, for all 1 <= i <= n,
-    # then it seems that if alpha avoids KM, then D(alpha) is multiplicity free.
-    if not mf and avoidsAll(alpha, KM):
+    # We know that if alpha avoids KM, then D(alpha) is multiplicity free.
+    if avoidsAll(alpha, KM) and not mf:
       print(f'anomally: {alpha}')
+
+    # Next, we check if the converse is true.
+    if mf and not avoidsAll(alpha, KM):
+      print(f'counterexample: {alpha}')
 
 if __name__ == '__main__':
   # multiplicities((10, 5, 12, 9, 8, 8, 4, 2, 5, 1, 3))
@@ -122,7 +128,7 @@ if __name__ == '__main__':
 
   parser = argparse.ArgumentParser()
   parser.add_argument('-k', type=int, required=True)
-  parser.add_argument('-w', '--max-width', type=int, default=5)
+  parser.add_argument('-w', '--max-width', type=int, default=None)
   args = parser.parse_args()
 
   main(args)
