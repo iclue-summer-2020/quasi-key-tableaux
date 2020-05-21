@@ -6,6 +6,7 @@ import numpy as np
 from collections import defaultdict
 from QK import QKTableaux, consoleFn
 
+
 def compositions(k, max_width):
   '''
   Generates every weak composition a = (a_1,...,a_l) where:
@@ -19,6 +20,7 @@ def compositions(k, max_width):
       yield from ()
       return
 
+    # TODO(ljeabmreosn): should these compositions include 0?
     for j in range(k+1):
       old, c[w] = c[w], j
       yield from comp(k-j, w+1)
@@ -39,6 +41,9 @@ def wt(T):
   return B
 
 def contains(alpha, b):
+  '''
+  Returns True if alpha contains the composition pattern b.
+  '''
   n = len(alpha)
   m = len(b)
   for indices in itertools.combinations(range(n), m):
@@ -56,6 +61,9 @@ def avoidsAll(alpha, bs):
   return all(avoids(alpha, b) for b in bs)
 
 class Mult:
+  '''
+  Helper class for bucketing each T by wt(T).
+  '''
   def __init__(self):
     self.wts = defaultdict(list)
 
@@ -71,6 +79,9 @@ class Mult:
 
 
 def multFree(alpha):
+  '''
+  Returns True if D(alpha) is multiplicity free.
+  '''
   qkt = QKTableaux(alpha)
   mult = Mult()
   status, num_solutions, sample = qkt.findAllSolutions(callbackFn=mult.addT)
@@ -78,6 +89,9 @@ def multFree(alpha):
 
 
 def multiplicities(alpha):
+  '''
+  Displays wt(T) for all T in qKT(alpha).
+  '''
   qkt = QKTableaux(alpha)
   mult = Mult()
   status, num_solutions, sample = qkt.findAllSolutions(callbackFn=mult.addT)
@@ -93,15 +107,22 @@ def main(args):
   for a in compositions(args.k, args.max_width):
     alpha = np.array(a)
     mf = multFree(alpha)
+
+    # If the logic is correct, this statement should never be true.
+    # ... but it sometimes is, so I must be misunderstanding Definition 1.3.
+    # I noticed that when a weak composition a = (a_1,...,a_n) satisfies:
+    #                 a_i > 0, for all 1 <= i <= n,
+    # then it seems that if alpha avoids KM, then D(alpha) is multiplicity free.
     if not mf and avoidsAll(alpha, KM):
       print(f'anomally: {alpha}')
 
 if __name__ == '__main__':
   # multiplicities((10, 5, 12, 9, 8, 8, 4, 2, 5, 1, 3))
-  multiplicities(np.array([0, 2, 2, 0]))
-  # parser = argparse.ArgumentParser()
-  # parser.add_argument('-k', type=int)
-  # parser.add_argument('-w', '--max-width', type=int, default=5)
-  # args = parser.parse_args()
+  # multiplicities(np.array([0, 1, 3, 0]))
 
-  # main(args)
+  parser = argparse.ArgumentParser()
+  parser.add_argument('-k', type=int, required=True)
+  parser.add_argument('-w', '--max-width', type=int, default=5)
+  args = parser.parse_args()
+
+  main(args)

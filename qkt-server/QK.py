@@ -113,7 +113,11 @@ def addConstraints(alpha, T, model):
 
         model.Add(T[r][c+1] > T[s][c]).OnlyEnforceIf(b)
         additional_constraints.append(b)
-        # model.Add(q or (not p))
+
+      # TODO(ljeabmreosn): Determine if this edge case is correct.
+      if 0 < alpha[r] <= alpha[s]:
+        model.Add(T[r][c_lim] <= T[s][c_lim])
+
 
   # (QK4): If (r, c) and (s, c+1) for s > r are both in D(alpha), then
   #        alpha[r] < alpha[s] implies T(r, c) < T(s, c+1).
