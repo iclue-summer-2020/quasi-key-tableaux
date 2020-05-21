@@ -167,6 +167,6 @@ if __name__ == '__main__':
   # Just as an example.
   alpha = (0, 1, 2, 3, 4)
   qkt = QKTableaux(alpha)
-  status, num_solutions = qkt.findAllSolutions(callbackFn=consoleFn)
+  status, num_solutions, sample = qkt.findAllSolutions(callbackFn=consoleFn)
   print(f'Status: {status}')
   print(f'Number of solutions: {num_solutions}')
