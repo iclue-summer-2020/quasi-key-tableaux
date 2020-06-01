@@ -1,7 +1,7 @@
 import React from 'react';
 import rp from 'request-promise';
 import {
-  ProgressBar, InputGroup, Button, Intent, FormGroup, Tooltip, H5, Slider,
+  ProgressBar, InputGroup, Button, Intent, FormGroup, Tooltip, H5, Slider, Colors,
 } from '@blueprintjs/core';
 import { withStyles, createStyles } from '@material-ui/styles';
 import { Theme, WithStyles, Paper, Grid, Typography } from '@material-ui/core';
@@ -50,6 +50,7 @@ interface State {
   Ts: number[][][] | null;
   sampleIdx: number;
   status: string | null;
+  sameWtSamples: number[][][] | null;
   numSolutions: number | null;
   validAlphaText: boolean;
   alphaText: string;
@@ -70,6 +71,7 @@ class QKTView extends React.Component<Props, State> {
       stage: Stage.Finished,
       alpha: null,
       status: null,
+      sameWtSamples: null,
       numSolutions: null,
       Ts: null,
       sampleIdx: 0,
@@ -170,6 +172,7 @@ class QKTView extends React.Component<Props, State> {
       stage: Stage.Finished,
       numSolutions: response['num_solutions'],
       status: response['status'],
+      sameWtSamples: response['same_weight_samples'],
       Ts: response['sample_solutions'],
       alpha,
     });
@@ -187,6 +190,7 @@ class QKTView extends React.Component<Props, State> {
       stage: Stage.Solving,
       alpha: null,
       status: null,
+      sameWtSamples: null,
       numSolutions: null,
       Ts: null,
       sampleIdx: 0,
@@ -213,7 +217,16 @@ class QKTView extends React.Component<Props, State> {
   };
 
   render = () => {
-    const { stage, Ts, alpha, validAlphaText, status, numSolutions, sampleIdx } = this.state;
+    const {
+      Ts,
+      alpha,
+      numSolutions,
+      sameWtSamples,
+      sampleIdx,
+      stage,
+      status,
+      validAlphaText,
+    } = this.state;
 
     const submitButton = (
       <Tooltip content='Find quasi-key tableaux'>
@@ -264,6 +277,10 @@ class QKTView extends React.Component<Props, State> {
           <div>
             <H5>Status: {status}</H5>
             <H5>Number of solutions: {numSolutions}</H5>
+            {sameWtSamples ?
+                <H5 style={{ color: Colors.RED2 }}>Found tableaux with same weight</H5>
+              : <H5 style={{ color: Colors.GREEN2 }}>Multiplicity free!</H5>
+            }
           </div>
         }
         {stage === Stage.Solving &&

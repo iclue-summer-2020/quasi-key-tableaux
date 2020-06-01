@@ -4,7 +4,10 @@ import sys
 
 from flask import Flask, jsonify, request
 from flask_cors import CORS
+
+from multiplicity import Mult
 from QK import QKTableaux, consoleFn
+
 
 app = Flask(__name__)
 CORS(app)
@@ -29,7 +32,8 @@ def solve():
     {
       status: OPTIMAL/FEASIBLE/INFEASIBLE,
       num_solutions: the number of solutions,
-      sample_solutions: a list of sample qkTs of length `num_samples`
+      sample_solutions: a list of sample qkTs of length `num_samples`,
+      same_weight_samples: null or a list of two sample qkT with the same wt,
     }
   '''
   aalpha = request.args.getlist('alpha[]')
@@ -37,17 +41,18 @@ def solve():
   alpha = [int(x) for x in aalpha]
   qkt = QKTableaux(alpha)
 
-  nullFn = lambda *_: None
+  mult = Mult()
   nnum_samples = request.args.get('num_samples')
   num_samples = int(nnum_samples) if nnum_samples is not None else 0
   status, num_solutions, samples = qkt.findAllSolutions(
-    callbackFn=nullFn,
+    callbackFn=mult.addT,
     num_samples=num_samples,
   )
   report = {
     'status': status,
     'num_solutions': num_solutions,
     'sample_solutions': samples,
+    'same_weight_samples': mult.same_weight_samples,
   }
   return jsonify(report)
 

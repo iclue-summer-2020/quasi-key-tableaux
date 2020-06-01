@@ -72,6 +72,7 @@ class Mult:
   '''
   def __init__(self):
     self.wts = defaultdict(list)
+    self.same_weight_samples = None
 
   def addT(self, alpha, TT):
     l = len(alpha)
@@ -81,7 +82,15 @@ class Mult:
     for r, t in enumerate(TT):
       T[r,:len(t)] = t
     w = wt(T)
-    self.wts[tuple(w)].append(T)
+    ww = tuple(w)
+    Ts = self.wts[ww]
+    Ts.append(TT)
+
+    if len(Ts) > 1 and self.same_weight_samples is None:
+      # We found two tableaux with the same weight.
+      # Notice that there will be exactly two samples returned if the
+      # composition is not multiplicity free.
+      self.same_weight_samples = Ts
 
 
 def multFree(alpha):
@@ -113,6 +122,10 @@ def main(args):
   for a in compositions(args.k, args.max_width):
     alpha = np.array(a)
     mf = multFree(alpha)
+
+    # This is just to see which types of compositions are multiplicity free.
+    if not mf:
+      print(f'not multiplicity free: {alpha}')
 
     # We know that if alpha avoids KM, then D(alpha) is multiplicity free.
     if avoidsAll(alpha, KM) and not mf:
