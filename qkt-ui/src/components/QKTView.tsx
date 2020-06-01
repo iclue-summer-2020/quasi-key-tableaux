@@ -1,7 +1,7 @@
 import React from 'react';
 import rp from 'request-promise';
 import {
-  ProgressBar, InputGroup, Button, Intent, FormGroup, Tooltip, H5,
+  ProgressBar, InputGroup, Button, Intent, FormGroup, Tooltip, H5, Slider,
 } from '@blueprintjs/core';
 import { withStyles, createStyles } from '@material-ui/styles';
 import { Theme, WithStyles, Paper, Grid, Typography } from '@material-ui/core';
@@ -17,6 +17,7 @@ const inDev = !process.env.NODE_ENV || process.env.NODE_ENV === 'development';
 const CORS = `https://cors-anywhere.herokuapp.com/`;
 const ENDPOINT = `${inDev ? '' : CORS}http://${REACT_APP_QKT_HOST}:${REACT_APP_QKT_PORT}`;
 const TILE_COLOR = blue[200];
+const NUM_SAMPLES = 20;
 
 const styles = (theme: Theme) => createStyles({
   root: {
@@ -46,7 +47,8 @@ interface Props extends WithStyles<typeof styles> { }
 interface State {
   stage: Stage;
   alpha: number[] | null;
-  T: number[][] | null;
+  Ts: number[][][] | null;
+  sampleIdx: number;
   status: string | null;
   numSolutions: number | null;
   validAlphaText: boolean;
@@ -69,7 +71,8 @@ class QKTView extends React.Component<Props, State> {
       alpha: null,
       status: null,
       numSolutions: null,
-      T: null,
+      Ts: null,
+      sampleIdx: 0,
       validAlphaText: false,
       alphaText: '',
     };
@@ -139,6 +142,7 @@ class QKTView extends React.Component<Props, State> {
       useQuerystring: true,
       qs: {
         'alpha[]': alpha,
+        'num_samples': NUM_SAMPLES,
       },
       json: true,
     };
@@ -166,23 +170,39 @@ class QKTView extends React.Component<Props, State> {
       stage: Stage.Finished,
       numSolutions: response['num_solutions'],
       status: response['status'],
-      T: response['sample_solution'],
+      Ts: response['sample_solutions'],
       alpha,
     });
   };
 
+  /**
+   * Called when the submit button is pressed.
+   */
   onSubmit = () => {
     const { alphaText } = this.state;
     const { valid, alpha } = this.validateAlphaText(alphaText);
     if (!valid) return;
 
-    this.setState({ stage: Stage.Solving }, () => this.sendRequest(alpha!));
+    this.setState({
+      stage: Stage.Solving,
+      alpha: null,
+      status: null,
+      numSolutions: null,
+      Ts: null,
+      sampleIdx: 0,
+    }, () => this.sendRequest(alpha!));
+  };
+
+  onSliderChange = (value: number) => {
+    this.setState({
+      sampleIdx: value-1,
+    });
   };
 
   /**
    * Called when the composition text is altered.
    */
-  onChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+  onAlphaChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const { value } = event.target;
     const { valid } = this.validateAlphaText(value);
 
@@ -193,7 +213,7 @@ class QKTView extends React.Component<Props, State> {
   };
 
   render = () => {
-    const { stage, T, alpha, validAlphaText, status, numSolutions } = this.state;
+    const { stage, Ts, alpha, validAlphaText, status, numSolutions, sampleIdx } = this.state;
 
     const submitButton = (
       <Tooltip content='Find quasi-key tableaux'>
@@ -217,13 +237,26 @@ class QKTView extends React.Component<Props, State> {
         >
           <InputGroup
             placeholder={'\u03b1'}
-            onChange={this.onChange}
+            onChange={this.onAlphaChange}
             intent={validAlphaText ? Intent.SUCCESS : Intent.DANGER}
             leftIcon='dot'
             rightElement={submitButton}
           />
         </FormGroup>
-        {T && this.buildGrid(T.slice().reverse())}
+        {Ts && this.buildGrid(Ts[sampleIdx].slice().reverse())}
+        {Ts &&
+          <div>
+            Samples
+            <Slider
+              value={sampleIdx+1}
+              disabled={stage === Stage.Solving}
+              min={1}
+              max={Ts.length}
+              onChange={this.onSliderChange}
+              className='qkt-slider'
+            />
+          </div>
+        }
         {alpha &&
           <div>
             <H5>Status: {status}</H5>

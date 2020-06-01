@@ -18,22 +18,27 @@ def consoleFn(alpha, T):
 
 class SolutionReporter(cp_model.CpSolverSolutionCallback):
   '''Callback class for solutions.'''
-  def __init__(self, alpha, T, additional_constraints, callbackFn):
+  def __init__(self, alpha, T, constraints, callbackFn, num_samples=1):
     cp_model.CpSolverSolutionCallback.__init__(self)
     self.alpha = alpha
     self.T = T
-    self.vars = [v for vv in T for v in vv] + additional_constraints
+    self.vars = [v for vv in T for v in vv] + constraints
     self.callbackFn = callbackFn
     self.num_solutions = 0
-    self.sample_solution = None
+    self.num_samples = num_samples
+    self.sample_solutions = []
 
   def on_solution_callback(self):
     '''Called when a solution is found.'''
     self.num_solutions += 1
     TT = [[self.Value(v) for v in vv] for vv in self.T]
-    if self.num_solutions == 1 \
-    or np.random.rand() < 1/self.num_solutions:
-      self.sample_solution = TT
+
+    # Reservoir sampling.
+    if self.num_solutions <= self.num_samples:
+      self.sample_solutions.append(TT)
+    elif np.random.rand() < self.num_samples/self.num_solutions:
+      i = np.random.randint(low=0, high=self.num_samples)
+      self.sample_solutions[i] = TT
 
     self.callbackFn(self.alpha, TT)
 
@@ -144,7 +149,7 @@ class QKTableaux:
     self.more_constraints = addConstraints(self.alpha, self.T, self.model)
     self.model.Validate()
 
-  def findAllSolutions(self, callbackFn):
+  def findAllSolutions(self, callbackFn, num_samples=1):
     '''
     Finds all possible quasi-key tableaux, reporting each solution to
     `callbackFn`.
@@ -158,18 +163,24 @@ class QKTableaux:
     '''
     solver = cp_model.CpSolver()
     alpha, T = self.alpha, self.T
-    sol_reporter = SolutionReporter(alpha, T, self.more_constraints, callbackFn)
+    sol_reporter = SolutionReporter(
+      alpha,
+      T,
+      self.more_constraints,
+      callbackFn,
+      num_samples,
+    )
     status_value = solver.SearchForAllSolutions(self.model, sol_reporter)
     status = cp_model_pb2.CpSolverStatus.Name(status_value)
     num_solutions =  sol_reporter.num_solutions
-    sample_solution = sol_reporter.sample_solution
-    return (status, num_solutions, sample_solution)
+    sample_solutions = sol_reporter.sample_solutions
+    return (status, num_solutions, sample_solutions)
 
 
 if __name__ == '__main__':
   # Just as an example.
   alpha = (0, 1, 2, 3, 4)
   qkt = QKTableaux(alpha)
-  status, num_solutions, sample = qkt.findAllSolutions(callbackFn=consoleFn)
+  status, num_solutions, samples = qkt.findAllSolutions(callbackFn=consoleFn)
   print(f'Status: {status}')
   print(f'Number of solutions: {num_solutions}')

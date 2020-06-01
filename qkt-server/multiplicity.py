@@ -90,7 +90,7 @@ def multFree(alpha):
   '''
   qkt = QKTableaux(alpha)
   mult = Mult()
-  status, num_solutions, sample = qkt.findAllSolutions(callbackFn=mult.addT)
+  status, num_solutions, samples = qkt.findAllSolutions(callbackFn=mult.addT)
   return len(mult.wts) == num_solutions
 
 
@@ -100,7 +100,7 @@ def multiplicities(alpha):
   '''
   qkt = QKTableaux(alpha)
   mult = Mult()
-  status, num_solutions, sample = qkt.findAllSolutions(callbackFn=mult.addT)
+  status, num_solutions, samples = qkt.findAllSolutions(callbackFn=mult.addT)
   print(f'Status: {status}')
   print(f'Number of solutions: {num_solutions}')
   print(f'len of mult: {len(mult.wts)}')
@@ -132,7 +132,7 @@ def main(args):
 if __name__ == '__main__':
   parser = argparse.ArgumentParser()
   parser.add_argument('-k', type=int, required=True)
-  parser.add_argument('-w', '--max-width', type=int, default=None)
+  parser.add_argument('-w', '--max-width', type=int, required=True)
   args = parser.parse_args()
 
   main(args)
