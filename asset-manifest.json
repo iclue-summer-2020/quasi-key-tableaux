@@ -1,15 +1,15 @@
 {
   "files": {
     "main.css": "/quasi-key-tableaux/static/css/main.759b86d4.chunk.css",
-    "main.js": "/quasi-key-tableaux/static/js/main.668bcdcd.chunk.js",
-    "main.js.map": "/quasi-key-tableaux/static/js/main.668bcdcd.chunk.js.map",
+    "main.js": "/quasi-key-tableaux/static/js/main.363d9c64.chunk.js",
+    "main.js.map": "/quasi-key-tableaux/static/js/main.363d9c64.chunk.js.map",
     "runtime-main.js": "/quasi-key-tableaux/static/js/runtime-main.d02716bf.js",
     "runtime-main.js.map": "/quasi-key-tableaux/static/js/runtime-main.d02716bf.js.map",
     "static/css/2.82dca9e4.chunk.css": "/quasi-key-tableaux/static/css/2.82dca9e4.chunk.css",
-    "static/js/2.0b10b270.chunk.js": "/quasi-key-tableaux/static/js/2.0b10b270.chunk.js",
-    "static/js/2.0b10b270.chunk.js.map": "/quasi-key-tableaux/static/js/2.0b10b270.chunk.js.map",
+    "static/js/2.0d1d5df8.chunk.js": "/quasi-key-tableaux/static/js/2.0d1d5df8.chunk.js",
+    "static/js/2.0d1d5df8.chunk.js.map": "/quasi-key-tableaux/static/js/2.0d1d5df8.chunk.js.map",
     "index.html": "/quasi-key-tableaux/index.html",
-    "precache-manifest.95c3f63aaadb800ebe14482d4f57279c.js": "/quasi-key-tableaux/precache-manifest.95c3f63aaadb800ebe14482d4f57279c.js",
+    "precache-manifest.28930ce1dbf4ce5b15eb67dd657581db.js": "/quasi-key-tableaux/precache-manifest.28930ce1dbf4ce5b15eb67dd657581db.js",
     "service-worker.js": "/quasi-key-tableaux/service-worker.js",
     "static/css/2.82dca9e4.chunk.css.map": "/quasi-key-tableaux/static/css/2.82dca9e4.chunk.css.map",
     "static/css/main.759b86d4.chunk.css.map": "/quasi-key-tableaux/static/css/main.759b86d4.chunk.css.map"
