@@ -222,6 +222,7 @@ class QKTView extends React.Component<Props, State> {
           icon='arrow-right'
           intent={Intent.PRIMARY}
           disabled={!validAlphaText}
+          type='submit'
           onClick={this.onSubmit}
         />
       </Tooltip>
@@ -229,20 +230,22 @@ class QKTView extends React.Component<Props, State> {
 
     return (
       <div>
-        <FormGroup
-          helperText=''
-          label='composition'
-          labelFor='text-input'
-          labelInfo='(weak)'
-        >
-          <InputGroup
-            placeholder={'\u03b1'}
-            onChange={this.onAlphaChange}
-            intent={validAlphaText ? Intent.SUCCESS : Intent.DANGER}
-            leftIcon='dot'
-            rightElement={submitButton}
-          />
-        </FormGroup>
+        <form onSubmit={e => e.preventDefault()}>
+          <FormGroup
+            helperText=''
+            label='composition'
+            labelFor='text-input'
+            labelInfo='(weak)'
+          >
+            <InputGroup
+              placeholder={'\u03b1'}
+              onChange={this.onAlphaChange}
+              intent={validAlphaText ? Intent.SUCCESS : Intent.DANGER}
+              leftIcon='dot'
+              rightElement={submitButton}
+            />
+          </FormGroup>
+        </form>
         {Ts && this.buildGrid(Ts[sampleIdx].slice().reverse())}
         {Ts &&
           <div>
