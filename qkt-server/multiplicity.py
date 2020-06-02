@@ -6,8 +6,10 @@ import numpy as np
 from collections import defaultdict
 from QK import QKTableaux, consoleFn
 
+KM = [(0, 1, 2), (0, 0, 2, 2), (0, 0, 2, 1), (1, 0, 3, 2), (1, 0, 2, 2)]
+KMP = [(0, 2, 4), (1, 0, 4, 3), (1, 2, 5, 4), (2, 1, 4, 5), (1, 2, 5, 6)]
 
-def compositions(k, max_width):
+def compositions(k, max_width, unique=False):
   '''
   Generates every weak composition a = (a_1,...,a_l) where:
     - l <= max_width,
@@ -16,7 +18,9 @@ def compositions(k, max_width):
   '''
   c = [0] * max_width
   def comp(k, w):
-    if k == 0: yield tuple(c[:w])
+    if k == 0:
+      if not (unique and len(set(c[:w])) < w):
+        yield tuple(c[:w])
     if w == max_width or k < 0:
       yield from ()
       return
@@ -117,9 +121,8 @@ def multiplicities(alpha):
     print(w, Ts)
 
 
-def main(args):
-  KM = [(0, 1, 2), (0, 0, 2, 2), (0, 0, 2, 1), (1, 0, 3, 2), (1, 0, 2, 2)]
-  for a in compositions(args.k, args.max_width):
+def multFreeCheck(k, max_width):
+  for a in compositions(k, max_width):
     alpha = np.array(a)
     mf = multFree(alpha)
 
@@ -127,9 +130,22 @@ def main(args):
     if not mf:
       print(f'not multiplicity free: {alpha}')
 
+def anomallyCheck(k, max_width):
+  '''
+  The following was proven to be true.
+  '''
+  for a in compositions(k, max_width):
+    alpha = np.array(a)
+    mf = multFree(alpha)
+
     # We know that if alpha avoids KM, then D(alpha) is multiplicity free.
     if avoidsAll(alpha, KM) and not mf:
       print(f'anomally: {alpha}')
+
+def hypo1(k, max_width):
+  for a in compositions(k, max_width):
+    alpha = np.array(a)
+    mf = multFree(alpha)
 
     # Next, we check if the converse is true.
     # We are only interested in multiplicity-free compositions.
@@ -141,6 +157,18 @@ def main(args):
     ]
     if contained_pats:
       print(f'counterexample: {alpha}; contains patterns: {contained_pats}.')
+
+def hypo2(k, max_width):
+  for a in compositions(k, max_width, unique=True):
+    alpha = np.array(a)
+    mf = multFree(alpha)
+
+    if avoidsAll(alpha, KMP) and not mf:
+      print(alpha)
+
+
+def main(args):
+  hypo2(args.k, args.max_width)
 
 if __name__ == '__main__':
   parser = argparse.ArgumentParser()
