@@ -1,0 +1,29 @@
+counterexample: [1 2 3 4 9]; contains patterns: [(0, 2, 4), (0, 1, 3, 4)].
+counterexample: [1 2 3 9 4]; contains patterns: [(0, 2, 4), (0, 1, 4, 3)].
+counterexample: [ 1  2  3 13]; contains patterns: [(0, 2, 4)].
+counterexample: [1 2 9 3 4]; contains patterns: [(0, 1, 4, 3)].
+counterexample: [1 3 4 5 6]; contains patterns: [(0, 2, 4), (0, 1, 3, 4)].
+counterexample: [1 4 5 6 3]; contains patterns: [(0, 2, 4)].
+counterexample: [1 5 6 7]; contains patterns: [(0, 2, 4)].
+counterexample: [1 6 2 3 7]; contains patterns: [(0, 2, 4)].
+counterexample: [1 6 3 4 5]; contains patterns: [(0, 2, 4)].
+counterexample: [1 7 2 3 6]; contains patterns: [(0, 2, 4)].
+counterexample: [1 7 2 4 5]; contains patterns: [(0, 1, 3, 4)].
+counterexample: [1 8 2 3 5]; contains patterns: [(0, 2, 4)].
+counterexample: [2 1 9 3 4]; contains patterns: [(1, 0, 4, 3)].
+counterexample: [2 3 1 9 4]; contains patterns: [(1, 0, 4, 3)].
+counterexample: [2 3 4 1 9]; contains patterns: [(0, 2, 4)].
+counterexample: [2 3 4 9 1]; contains patterns: [(0, 2, 4)].
+counterexample: [ 2  3  4 10]; contains patterns: [(0, 2, 4)].
+counterexample: [3 1 4 5 6]; contains patterns: [(0, 2, 4), (1, 0, 3, 4)].
+counterexample: [3 1 6 4 5]; contains patterns: [(1, 0, 4, 3)].
+counterexample: [3 4 1 5 6]; contains patterns: [(1, 0, 3, 4)].
+counterexample: [3 4 1 6 5]; contains patterns: [(1, 0, 4, 3)].
+counterexample: [3 4 5 7]; contains patterns: [(0, 2, 4)].
+counterexample: [4 1 2 3 9]; contains patterns: [(0, 2, 4)].
+counterexample: [5 1 2 3 8]; contains patterns: [(0, 2, 4)].
+counterexample: [6 1 2 3 7]; contains patterns: [(0, 2, 4)].
+counterexample: [6 1 3 4 5]; contains patterns: [(0, 2, 4)].
+counterexample: [7 1 2 3 6]; contains patterns: [(0, 2, 4)].
+counterexample: [7 1 2 4 5]; contains patterns: [(0, 1, 3, 4)].
+counterexample: [8 1 2 3 5]; contains patterns: [(0, 2, 4)].
