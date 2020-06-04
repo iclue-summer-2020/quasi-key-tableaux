@@ -7,9 +7,10 @@ from collections import defaultdict
 from QK import QKTableaux, consoleFn
 
 KM = [(0, 1, 2), (0, 0, 2, 2), (0, 0, 2, 1), (1, 0, 3, 2), (1, 0, 2, 2)]
-KMP = [(0, 2, 4), (1, 0, 4, 3), (0, 1, 4, 3), (1, 0, 3, 4), (0, 1, 4, 5)]
+KMP = [(0, 2, 4), (1, 0, 4, 3), (0, 1, 4, 3), (1, 0, 3, 4), (0, 1, 3, 4)]
+ZP = [(1, 0, 3, 3), (0, 0, 2, 2), (0, 0, 3, 2), (0, 1, 3, 3), (0, 0, 2, 3)]
 
-def compositions(k, max_width, unique=False):
+def compositions(k, max_width, unique=False, zeros=False):
   '''
   Generates every weak composition a = (a_1,...,a_l) where:
     - l <= max_width,
@@ -25,7 +26,7 @@ def compositions(k, max_width, unique=False):
       yield from ()
       return
 
-    for j in range(1, k+1):
+    for j in range(int(not zeros), k+1):
       old, c[w] = c[w], j
       yield from comp(k-j, w+1)
       c[w] = old
@@ -166,9 +167,67 @@ def hypo2(k, max_width):
     if avoidsAll(alpha, KMP) and not mf:
       print(alpha)
 
+def hypo3(k, max_width):
+  for a in compositions(k, max_width, unique=True):
+    alpha = np.array(a)
+    mf = multFree(alpha)
+
+    if avoidsAll(alpha, KMP) and not mf:
+      print(alpha)
+
+def hypo4(k, max_width):
+  for a in compositions(k, max_width, unique=True):
+    alpha = np.array(a)
+    mf = multFree(alpha)
+
+    # Next, we check if the converse is true.
+    # We are only interested in multiplicity-free compositions.
+    if not mf: continue
+    contained_pats = [
+      pattern
+      for pattern in KMP
+      if not avoids(alpha, pattern)
+    ]
+    if contained_pats:
+      print(f'counterexample: {alpha}; contains patterns: {contained_pats}.')
+
+
+def hypo5(k, max_width):
+  QKM = KMP + ZP
+  for a in compositions(k, max_width, unique=False):
+    alpha = np.array(a)
+    mf = multFree(alpha)
+
+    if avoidsAll(alpha, QKM) and not mf:
+      print(alpha)
+
+def hypo6(k, max_width):
+  QKM = KMP + ZP
+  for a in compositions(k, max_width, unique=False):
+    alpha = np.array(a)
+    mf = multFree(alpha)
+
+    # Next, we check if the converse is true.
+    # We are only interested in multiplicity-free compositions.
+    if not mf: continue
+    contained_pats = [
+      pattern
+      for pattern in QKM
+      if not avoids(alpha, pattern)
+    ]
+    if contained_pats:
+      print(f'counterexample: {alpha}; contains patterns: {contained_pats}.')
+
+def hypo7(k, max_width):
+  for a in compositions(k, max_width, unique=True, zeros=True):
+    alpha = np.array(a)
+    mf = multFree(alpha)
+
+    if avoidsAll(alpha, KMP) and not mf:
+      print(alpha)
 
 def main(args):
-  hypo2(args.k, args.max_width)
+  hypo7(args.k, args.max_width)
 
 if __name__ == '__main__':
   parser = argparse.ArgumentParser()
