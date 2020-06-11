@@ -6,6 +6,9 @@ import numpy as np
 from collections import defaultdict
 from QK import QKTableaux, consoleFn
 
+# I am making an assumption that a 0 cannot be marked.
+# If it can, I assume I can just add one to each of these bad pattern.
+# Now, a number is "marked" iff it is negative.
 KM = [(0, 1, 2), (0, 0, 2, 2), (0, 0, 2, 1), (1, 0, 3, 2), (1, 0, 2, 2)]
 KMP = [(0, 2, 4), (1, 0, 4, 3), (0, 1, 4, 3), (1, 0, 3, 4), (0, 1, 3, 4)]
 ZP = [(1, 0, 3, 3), (0, 0, 2, 2), (0, 0, 3, 2), (0, 1, 3, 3), (0, 0, 2, 3)]
@@ -45,13 +48,26 @@ def wt(T):
   B[0] = 0
   return B
 
-def cc(a, b):
-  '''Helper method for the `contains` function.'''
+def cc(a, b, j):
+  '''
+  Helper method for the `contains` function.
+  `j` - is an array which stores the indices. i.e., a[j[s]] is to get the
+        corresponding value of b[s].
+  '''
   m = len(b)
+
+  # Check the marked property.
+  for s in range(m):
+    if b[s] < 0 and j[s] >= 1 and a[j[s]] < a[j[s]-1] + 2:
+      return False
+
+  # Check the normal properties.
   for s in range(m):
     for t in range(m):
-      if (a[s] <= a[t]) != (b[s] <= b[t]): return False
-      if abs(a[s]-a[t]) < abs(b[s]-b[t]): return False
+      # Get the magnitude of the bad pattern elements.
+      bs, bt = abs(b[s]), abs(b[t])
+      if (a[j[s]] <= a[j[t]]) != (bs <= bt): return False
+      if abs(a[j[s]]-a[j[t]]) < abs(bs-bt): return False
   return True
 
 def contains(alpha, b):
@@ -61,8 +77,8 @@ def contains(alpha, b):
   n = len(alpha)
   m = len(b)
   for indices in itertools.combinations(range(n), m):
-    a = alpha[np.array(indices)]
-    if cc(a, b): return True
+    j = np.array(indices)
+    if cc(alpha, b, j): return True
   return False
 
 def avoids(alpha, b):
@@ -226,8 +242,21 @@ def hypo7(k, max_width):
     if avoidsAll(alpha, KMP) and not mf:
       print(alpha)
 
+def hypo8(k, max_width):
+  # Negative values are "marked".
+  MP = [
+    (0,-2,-4),(1,0,-4,3),(0,1,-4, 3),(1,0,-3,4),(0,1,-3,4),
+    (1,0,-3,3),(0,0,-2,2),(0,0,-3,2),(0,1,-3,3),(0,0,-2,3),
+  ]
+  for a in compositions(k, max_width, unique=False):
+    alpha = np.array(a)
+    mf = multFree(alpha)
+
+    if avoidsAll(alpha, MP) and not mf:
+      print(alpha)
+
 def main(args):
-  hypo7(args.k, args.max_width)
+  hypo8(args.k, args.max_width)
 
 if __name__ == '__main__':
   parser = argparse.ArgumentParser()
