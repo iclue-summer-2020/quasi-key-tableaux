@@ -29,24 +29,25 @@ def lswap(ax):
   n = len(ax)
   comp = list(ax)
 
-  def _lswap(i):
-    tcomp = tuple(comp)
-    if (tcomp, i) in seen: return
-    possible.add(tcomp)
-    seen.add((tcomp, i))
+  def _lswap(i, swapped=False):
+    if swapped:
+      tcomp = tuple(comp)
+      if (tcomp, i) in seen: return
+      possible.add(tcomp)
+      seen.add((tcomp, i))
 
     if i >= n: return
 
-    _lswap(i+1)
+    _lswap(i+1, swapped=swapped)
     for j in range(i+1, n):
-      if comp[i] > comp[j]:
+      if comp[i] < comp[j]:
         oci, ocj = comp[i], comp[j]
         comp[i], comp[j] = comp[j], comp[i]
-        _lswap(0)
+        _lswap(0, swapped=True)
         comp[i], comp[j] = oci, ocj
     return
 
-  _lswap(0)
+  _lswap(0, swapped=False)
   return possible
 
 
