@@ -8,14 +8,14 @@ from QK import QKTableaux
 
 
 def dom(ax, bx):
-  '''Returns whether or not `ax` dominates `bx`.'''
+  '''Returns whether or not `ax` dominates `bx` (<=).'''
   assert len(ax) == len(bx), (len(ax), len(bx))
   asum = 0
   bsum = 0
   for a, b in zip(ax, bx):
     asum += a
     bsum += b
-    if asum < bsum: return False
+    if asum > bsum: return False
   return True
 
 def lswap(ax):
@@ -29,25 +29,24 @@ def lswap(ax):
   n = len(ax)
   comp = list(ax)
 
-  def _lswap(i, swapped=False):
-    if swapped:
-      tcomp = tuple(comp)
-      if (tcomp, i) in seen: return
-      possible.add(tcomp)
-      seen.add((tcomp, i))
+  def _lswap(i):
+    tcomp = tuple(comp)
+    if (tcomp, i) in seen: return
+    possible.add(tcomp)
+    seen.add((tcomp, i))
 
     if i >= n: return
 
-    _lswap(i+1, swapped=swapped)
+    _lswap(i+1)
     for j in range(i+1, n):
       if comp[i] < comp[j]:
         oci, ocj = comp[i], comp[j]
         comp[i], comp[j] = comp[j], comp[i]
-        _lswap(0, swapped=True)
+        _lswap(0)
         comp[i], comp[j] = oci, ocj
     return
 
-  _lswap(0, swapped=False)
+  _lswap(0)
   return possible
 
 
@@ -84,7 +83,8 @@ def kappa(ax):
     mult = Mult()
     status, num_solutions, samples = qkt.findAllSolutions(callbackFn=mult.addT)
     for w, Ts in mult.wts.items():
-      poly[pad(w)] += len(Ts)
+      # Remove 0's from front since it is always zero.
+      poly[pad(w)[1:]] += len(Ts)
   return dict(poly)
 
 
