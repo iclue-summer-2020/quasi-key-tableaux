@@ -13,9 +13,7 @@ import 'styles/QKTView.css';
 
 const { REACT_APP_QKT_HOST = 'localhost', REACT_APP_QKT_PORT = '' } = process.env;
 
-const inDev = !process.env.NODE_ENV || process.env.NODE_ENV === 'development';
-const CORS = `https://cors-anywhere.herokuapp.com/`;
-const ENDPOINT = `${inDev ? '' : CORS}http://${REACT_APP_QKT_HOST.trim()}${REACT_APP_QKT_PORT.trim() ? `:${REACT_APP_QKT_PORT.trim()}` : ''}`;
+const ENDPOINT = `${REACT_APP_QKT_HOST.trim()}${REACT_APP_QKT_PORT.trim() ? `:${REACT_APP_QKT_PORT.trim()}` : ''}`;
 const TILE_COLOR = blue[200];
 const NUM_SAMPLES = 20;
 
