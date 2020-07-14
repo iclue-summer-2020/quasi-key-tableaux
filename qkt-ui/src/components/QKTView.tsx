@@ -11,11 +11,11 @@ import Message, { TIMEOUT } from 'utils/Message';
 import 'styles/QKTView.css';
 
 
-const { REACT_APP_QKT_HOST = 'localhost', REACT_APP_QKT_PORT = 5000 } = process.env;
+const { REACT_APP_QKT_HOST = 'localhost', REACT_APP_QKT_PORT = '' } = process.env;
 
 const inDev = !process.env.NODE_ENV || process.env.NODE_ENV === 'development';
 const CORS = `https://cors-anywhere.herokuapp.com/`;
-const ENDPOINT = `${inDev ? '' : CORS}http://${REACT_APP_QKT_HOST}:${REACT_APP_QKT_PORT}`;
+const ENDPOINT = `${inDev ? '' : CORS}http://${REACT_APP_QKT_HOST}${REACT_APP_QKT_PORT ? `:${REACT_APP_QKT_PORT}` : ''}`;
 const TILE_COLOR = blue[200];
 const NUM_SAMPLES = 20;
 
