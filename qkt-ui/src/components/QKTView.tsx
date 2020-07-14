@@ -15,7 +15,7 @@ const { REACT_APP_QKT_HOST = 'localhost', REACT_APP_QKT_PORT = '' } = process.en
 
 const inDev = !process.env.NODE_ENV || process.env.NODE_ENV === 'development';
 const CORS = `https://cors-anywhere.herokuapp.com/`;
-const ENDPOINT = `${inDev ? '' : CORS}http://${REACT_APP_QKT_HOST}${REACT_APP_QKT_PORT ? `:${REACT_APP_QKT_PORT}` : ''}`;
+const ENDPOINT = `${inDev ? '' : CORS}http://${REACT_APP_QKT_HOST.trim()}${REACT_APP_QKT_PORT.trim() ? `:${REACT_APP_QKT_PORT.trim()}` : ''}`;
 const TILE_COLOR = blue[200];
 const NUM_SAMPLES = 20;
 
